@@ -17,7 +17,10 @@
     
     .action-bar { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
     
-    .pc-item { background: #1f2937; padding: 10px 15px; margin: 8px 0; border-radius: 6px; display: flex; align-items: center; gap: 10px; }
+    .pc-item { background: #1f2937; padding: 10px 15px; margin: 8px 0; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .pc-info { display: flex; align-items: center; gap: 10px; }
+    .btn-delete-pc { background: #dc2626; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .btn-delete-pc:hover { opacity: 0.8; }
     
     .app-item { 
       background: #1e293b; 
@@ -149,7 +152,13 @@
       for (var i = 0; i < keys.length; i++) {
         var pcName = keys[i];
         var checkedAttr = allPCsSelected ? 'checked' : '';
-        html += '<div class="pc-item"><input type="checkbox" class="pc-checkbox" ' + checkedAttr + ' value="' + pcName + '"> <b>' + pcName + '</b></div>';
+        html += '<div class="pc-item">' +
+                  '<div class="pc-info">' +
+                    '<input type="checkbox" class="pc-checkbox" ' + checkedAttr + ' value="' + pcName + '"> ' +
+                    '<b>' + pcName + '</b>' +
+                  '</div>' +
+                  '<button class="btn-delete-pc" onclick="deletePC(\'' + pcName + '\')">🗑️ Xóa</button>' +
+                '</div>';
       }
       pcListDiv.innerHTML = html;
     });
@@ -160,6 +169,17 @@
       checkboxes.forEach(function(cb) {
         cb.checked = allPCsSelected;
       });
+    }
+
+    // Hàm xóa 1 máy tính khỏi Firebase
+    function deletePC(pcName) {
+      if (confirm("Bạn có chắc muốn xóa máy " + pcName + " khỏi danh sách quản lý không?")) {
+        db.ref("pcs/" + pcName).remove().then(function() {
+          console.log("Đã xóa máy: " + pcName);
+        }).catch(function(error) {
+          alert("Lỗi khi xóa: " + error.message);
+        });
+      }
     }
 
     // 5. Xử lý File và Danh sách App
